@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <!-- 开启MVC注解驱动 -->
+    <mvc:annotation-driven>
+<!--不需要返回JSON,所以不配置消息转换器使用fastJson-->
+    </mvc:annotation-driven>
+
+
+    <!-- 配置静态资源用WEB容器默认的servlet来处理 -->
+    <mvc:default-servlet-handler></mvc:default-servlet-handler>
+
+    <!-- ############## 配置dubbo服务消费者 ############## -->
+    <!-- 配置当前应用的名称 -->
+    <dubbo:application name="pinyougou-search-web"/>
+    <!-- 配置zookeeper作为注册中心，注册服务地址 -->
+    <dubbo:registry protocol="zookeeper" address="192.168.12.131:2181"/>
+    <!-- 配置采用包扫描来引用服务，产生服务接口的代理对象 -->
+    <dubbo:annotation package="com.pinyougou.search"/>
+
+
+</beans>

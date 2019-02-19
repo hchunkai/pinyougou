@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+
+    <!--加载属性文件-->
+    <context:property-placeholder location="classpath:jms.properties"/>
+    <!--########### 通用配置 #########-->
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
+        <property name="brokerURL" value="${brokerURL}"/>
+    </bean>
+    <bean class="org.springframework.jms.connection.SingleConnectionFactory" id="singleConnectionFactory">
+        <property name="targetConnectionFactory" ref="activeMQConnectionFactory"></property>
+    </bean>
+
+    <!--#######配置消息消费者,生成SKU的静态页面###########-->
+    <jms:listener-container connection-factory="singleConnectionFactory" destination-type="topic">
+        <jms:listener destination="createStaticItem.topic" ref="createStaticItemListener"/>
+    </jms:listener-container>
+    <!--监听-->
+    <bean class="com.pinyougou.item.listener.CreateStaticItemListener" id="createStaticItemListener"/>
+
+    <!--#######配置消息消费者,删除SKU的静态页面###########-->
+    <jms:listener-container destination-type="topic" connection-factory="singleConnectionFactory">
+        <jms:listener destination="deleteStaticItem.topic" ref="deleteStaticItem"/>
+    </jms:listener-container>
+    <bean class="com.pinyougou.item.listener.DeleteStaticItem" id="deleteStaticItem"/>
+
+</beans>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!--加载属性文件-->
+    <context:property-placeholder location="classpath:jms.properties"/>
+    <!--##### 通用配置 ############-->
+    <!--ActiveMQ的连接工厂-->
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
+        <property name="brokerURL" value="${brokerURL}"/>
+        <!--<constructor-arg value="${brokerURL}"/>-->
+    </bean>
+
+    <!-- 配置Spring-JMS的单例连接工厂 -->
+    <bean class="org.springframework.jms.connection.SingleConnectionFactory" id="singleConnectionFactory">
+        <!-- 设置ActiveMQ的连接工厂交由它管理-->
+        <property name="targetConnectionFactory" ref="activeMQConnectionFactory"></property>
+    </bean>
+
+    <!--##### 配置消息生产者 ###########-->
+    <!-- 配置JmsTemplate模版对象发送消息 -->
+    <bean class="org.springframework.jms.core.JmsTemplate" id="jmsTemplate">
+        <constructor-arg name="connectionFactory" ref="singleConnectionFactory"></constructor-arg>
+
+
+    <!--##### 配置目的地 ###########-->
+    </bean>
+    <!-- 配置目的地(点对点 创建商品的索引) -->
+    <bean class="org.apache.activemq.command.ActiveMQQueue" id="solrQueue">
+        <constructor-arg value="solr.queue" name="name"></constructor-arg>
+    </bean>
+
+    <!--######### 配置消息生产者(点对点 删除商品索引) ###########-->
+    <bean class="org.apache.activemq.command.ActiveMQQueue" id="solrDeleteQueue">
+        <constructor-arg value="solr.delete.queue"/>
+    </bean>
+
+    <!--配置消息生产者,生成商品详情静态化消息(发布和订阅模式) -->
+    <bean class="org.apache.activemq.command.ActiveMQTopic" id="createStatciItemTopic">
+        <constructor-arg value="createStaticItem.topic"/>
+    </bean>
+
+    <!-- 配置消息生产者,生成商品详情静态化消息(发布和订阅模式) -->
+    <bean class="org.apache.activemq.command.ActiveMQTopic" id="deleteStaticItemTopic">
+        <constructor-arg value="deleteStaticItem.topic"/>
+    </bean>
+
+
+</beans>

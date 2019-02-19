@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--配置认证管理-->
+    <security:authentication-manager>
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="admin" password="admin" authorities="ROLE_ADMIN"></security:user>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!--配置不拦截的资源-->
+    <security:http pattern="/login.html" security="none"/>
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/img/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/plugins/**" security="none"/>
+
+    <!--配置拦截授权管理-->
+    <security:http>
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')"/>
+        <!--登录配置-->
+        <security:form-login default-target-url="/admin/index.html"
+                             authentication-failure-url="/login.html"
+                             always-use-default-target="true"
+                             login-page="/login.html"></security:form-login>
+
+        <!--配置退出-->
+        <security:logout invalidate-session="true" logout-success-url="/login.html"/>
+        <!-- 关闭CSRF 跨站点请求伪造 -->
+        <security:csrf disabled="true"/>
+        <!-- /admin/index.html页面包含了 <iframe/> 子窗口  -->
+        <security:headers>
+            <!-- 配置iframe在相同域名下是可以访问的 SAMEORIGIN same origin -->
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+
+    </security:http>
+
+</beans>

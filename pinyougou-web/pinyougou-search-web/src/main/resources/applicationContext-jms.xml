@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+    <!--加载属性文件-->
+    <context:property-placeholder location="classpath:jms.properties"/>
+    <!--创建ActiveMQ连接工厂-->
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
+        <property name="brokerURL" value="${brokerURL}"/>
+    </bean>
+    <!--创建spring整合jms连接工厂-->
+    <bean class="org.springframework.jms.connection.SingleConnectionFactory" id="singleConnectionFactory">
+        <!--管理ActiviceMQ连接工厂-->
+        <property name="targetConnectionFactory" ref="activeMQConnectionFactory"/>
+    </bean>
+
+    <!--#####创建消息消费者#############-->
+    <jms:listener-container destination-type="queue" connection-factory="singleConnectionFactory">
+        <!--===========创建目的地===========-->
+        <!--创建商品索引-->
+        <jms:listener destination="solr.queue" ref="itemMessageListener"/>
+        <!--删除商品索引-->
+        <jms:listener destination="solr.delete.queue" ref="deleteMessageListener"/>
+    </jms:listener-container>
+
+    <!--配置监听器-->
+    <bean class="com.pinyougou.search.listener.ItemMessageListener" id="itemMessageListener"/>
+    <bean class="com.pinyougou.search.listener.DeleteMessageListener" id="deleteMessageListener"/>
+
+
+</beans>

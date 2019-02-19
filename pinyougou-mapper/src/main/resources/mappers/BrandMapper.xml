@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pinyougou.mapper.BrandMapper">
+
+    <select id="findAll" resultType="com.pinyougou.pojo.Brand" parameterType="Brand">
+        select * from tb_brand
+        <where>
+            <if test="name!=null and name!=''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="firstChar!=null and firstChar!=''">
+                and first_char = #{firstChar}
+            </if>
+        </where>
+        order by id
+    </select>
+
+    <select id="brandIDandName" resultType="java.util.Map">
+        select id,name as text from tb_brand
+    </select>
+</mapper>
