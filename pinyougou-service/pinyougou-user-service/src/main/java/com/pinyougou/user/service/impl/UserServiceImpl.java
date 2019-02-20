@@ -10,6 +10,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import tk.mybatis.mapper.entity.Example;
 
 import java.io.Serializable;
 import java.util.*;
@@ -153,5 +154,22 @@ public class UserServiceImpl implements UserService {
         String oldCode = (String) redisTemplate.boundValueOps(phone).get();
         return code.equals(oldCode);
 
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param user
+     */
+    @Override
+    public void updatePassword(User user) {
+        try {
+            Example example = new Example(User.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("username", user.getUsername());
+            userMapper.updateByExampleSelective(user, example);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 }

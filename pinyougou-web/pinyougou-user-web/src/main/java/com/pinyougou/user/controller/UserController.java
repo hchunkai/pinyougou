@@ -3,6 +3,8 @@ package com.pinyougou.user.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.User;
 import com.pinyougou.service.UserService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -62,4 +64,20 @@ public class UserController {
         return map;
     }
 
+    /**
+     * 修改密码
+     */
+    @GetMapping("/updatePassword")
+    public Boolean updatePassword(String password) {
+        try {
+            User user = new User();
+            user.setPassword(DigestUtils.md5Hex(password));
+            user.setName(SecurityContextHolder.getContext().getAuthentication().getName());
+           userService.updatePassword(user);
+           return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

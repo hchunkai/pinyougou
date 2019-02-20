@@ -38,4 +38,7 @@ public interface UserService {
 
 	/** 检查短信验证码是否正确 */
 	boolean checkSmsCode(String phone, String code);
+
+	/** 修改密码*/
+	void updatePassword(User user);
 }

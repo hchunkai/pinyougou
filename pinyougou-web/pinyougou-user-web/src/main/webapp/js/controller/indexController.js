@@ -1,10 +1,5 @@
-app.controller('indexController', function ($scope, baseService) {
+app.controller('indexController', function ($scope,$controller) {
 
-    //定于获取用户名方法
-    $scope.showName=function () {
-        baseService.sendGet("/user/showName").then(function (response) {
-            $scope.loginName = response.data.loginName;
-        })
-    }
-
+    //继承指定的controller
+    $controller('baseController',{$scope:$scope});
 });

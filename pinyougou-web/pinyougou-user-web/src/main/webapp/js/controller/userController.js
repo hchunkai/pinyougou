@@ -1,6 +1,26 @@
 /** 定义控制器层 */
-app.controller('userController', function ($scope, baseService,$timeout) {
+app.controller('userController', function ($scope, baseService,$controller,$timeout) {
 
+// 继承指定的baseControoler
+    $controller('baseController',{$scope:$scope});
+
+    //修改密码
+    $scope.updatePassword=function(){
+        if ($scope.password == $scope.againPassword) {
+            baseService.sendGet("/user/updatePassword?password="+$scope.password).then(function (response) {
+               if (response.data) {
+                   alert('修改密码成功');
+                   location.href="http://sso.pinyougou.com/logout?service="+$scope.redirectUrl;
+               } else{
+                   alert('系统错误');
+               }
+            });
+        }else{
+            alert("两次输入密码不一致");
+            $scope.password='';
+            $scope.againPassword='';
+        }
+    };
 
     //初始化user对象
     $scope.user = {};

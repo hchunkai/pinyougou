@@ -25,7 +25,12 @@
 
         function setIFrameHeight() {
             $("#iframe").height($(".content-wrapper").height() - 5);
+        };
+
+        if (window != parent){
+            parent.location = window.location
         }
+
     </script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini"

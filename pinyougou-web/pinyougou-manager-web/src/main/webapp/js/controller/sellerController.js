@@ -35,8 +35,9 @@ app.controller('sellerController', function($scope, $controller, baseService){
 
     /** 显示修改 */
     $scope.show = function(entity){
+
        /** 把json对象转化成一个新的json对象 */
-       $scope.entity = JSON.parse(JSON.stringify(entity));
+       $scope.seller1 = JSON.parse(JSON.stringify(entity));
     };
 
     /** 批量删除 */
@@ -55,4 +56,5 @@ app.controller('sellerController', function($scope, $controller, baseService){
             alert("请选择要删除的记录！");
         }
     };
+    $scope.arr=['待审核','已审核','审核通过','关闭'];
 });
